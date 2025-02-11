@@ -18,7 +18,7 @@ body {
     grid-template-columns: 1fr 1fr 1fr;
     justify-content: baseline;
     align-items: end;
-    cursor: move; /* Change cursor to indicate draggable */
+    cursor: move;
 }
 .bar {
     color: #ffffff;
@@ -106,8 +106,7 @@ body {
 
 #resultsBox {
     position: absolute;
-    top: 40%;
-    left: 15%;
+    top: 43%;
     text-align: center;
     display: grid;
     width: 200px;
@@ -116,8 +115,9 @@ body {
     border-radius: 5px;
     color: #ffffff;
     font-weight: bold;
+    font-size: 30px;
     margin: 20px 20px;
-    cursor: move; /* Change cursor to indicate draggable */
+    cursor: move;
 }
 
 #resultsBox div {
@@ -132,8 +132,8 @@ body {
 
 #lineGraphContainer {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 20px;
+    left: 55%;
     transform: translateX(-50%);
     background-color: #54545f;
     border: 3px solid #3c3c44;
@@ -143,13 +143,14 @@ body {
 }
 
 #lineGraph {
-    width: 400px;
-    height: 250px;
+    width: 800px;
+    height: 500px;
 }
 
 #colourInputs {
     position: absolute;
-    top: 43%;
+    top: 30%;
+    left: 15%;
     text-align: center;
     display: grid;
     width: 200px;
@@ -159,4 +160,11 @@ body {
     color: #ffffff;
     font-weight: bold;
     margin: 20px 20px;
+}
+
+#colourInputs input {
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
 }

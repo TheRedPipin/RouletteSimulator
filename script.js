@@ -150,7 +150,7 @@ function initializeLineGraph() {
                         enabled: true,
                         mode: 'xy'
                     },
-                    zoom: {
+                    wheel: {
                         enabled: true,
                         mode: 'xy'
                     }
@@ -172,6 +172,18 @@ function resetLineGraph() {
 }
 
 function start() {
+    document.getElementById('blueButton').addEventListener('click', () => {
+        selectColor('blue');
+        target = 0;
+    });
+    document.getElementById('redButton').addEventListener('click', () => {
+        selectColor('red');
+        target = 1;
+    });
+    document.getElementById('greenButton').addEventListener('click', () => {
+        selectColor('green');
+        target = 2;
+    });
     wins = 0;
     losses = 0;
     chosen = [0, 0, 0];
@@ -184,7 +196,7 @@ function start() {
     document.getElementById("runText").innerText = `Runs: ${runsTotal}`;
     document.getElementById("budgetText").innerText = `Budget: $${budget}`;
     document.getElementById("betText").innerText = `Bet: $${bet}`;
-    document.getElementById("profitText").innerText = `Profit: $${budget - startBudget}`;
+    document.getElementById("profitText").innerText = `Profit: $${(budget - startBudget).toFixed(2)}`;
     if (started) return;
     let inputs = document.querySelectorAll("#userInputs input");
     let buttons = document.querySelectorAll("#userInputs button");
@@ -206,11 +218,14 @@ function start() {
     let blueProb = parseFloat(document.getElementById("blueProbInput").value) / 100;
     let redProb = parseFloat(document.getElementById("redProbInput").value) / 100;
     let greenProb = parseFloat(document.getElementById("greenProbInput").value) / 100;
-
-    let blueMultiplier = parseFloat(document.getElementById("blueMultiplierInput").value);
-    let redMultiplier = parseFloat(document.getElementById("redMultiplierInput").value);
-    let greenMultiplier = parseFloat(document.getElementById("greenMultiplierInput").value);
-
+    let multiplier = 0;
+    if (target === 0) {
+        multiplier = parseFloat(document.getElementById("blueMultiplierInput").value);
+    } else if (target === 1) {
+        multiplier = parseFloat(document.getElementById("redMultiplierInput").value);
+    } else if (target === 2) {
+        multiplier = parseFloat(document.getElementById("greenMultiplierInput").value);
+    }
     if (blueProb + redProb + greenProb !== 1) {
         alert("Probabilities must sum up to 100%");
         inputs.forEach(input => input.disabled = false);
@@ -240,16 +255,12 @@ function start() {
                 return;
             }
             let num = Math.random();
-            let multiplier = 1;
             if (num < blueProb) {
                 num = 0;
-                multiplier = blueMultiplier;
             } else if (num < blueProb + redProb) {
                 num = 1;
-                multiplier = redMultiplier;
             } else {
                 num = 2;
-                multiplier = greenMultiplier;
             }
             chosen[num]++;
             if (num === target) {
@@ -265,9 +276,6 @@ function start() {
                 losses += 1;
             }
             let percentage = chosen.map(value => (value / (i + 1)) * 100);
-            console.log(chosen)
-            console.log(i + 1)
-            console.log(percentage)
             updateBarChart(...percentage);
             updateLineGraph(runsTotal, budget);
             if (i === runs - 1) {
@@ -282,7 +290,7 @@ function start() {
             document.getElementById("runText").innerText = `Runs: ${runsTotal}`;
             document.getElementById("budgetText").innerText = `Budget: $${parseFloat(budget.toFixed(2))}`;
             document.getElementById("betText").innerText = `Bet: $${parseFloat(bet.toFixed(2))}`;
-            document.getElementById("profitText").innerText = `Profit: $${budget - startBudget}`;
+            document.getElementById("profitText").innerText = `Profit: $${(budget - startBudget).toFixed(2)}`;
         }, i * speed);
         timeouts.push(timeout); // Store timeout
     }
@@ -291,4 +299,23 @@ function start() {
 function clearTimeouts() {
     timeouts.forEach(timeout => clearTimeout(timeout));
     timeouts = [];
+}
+
+document.getElementById('generateMultipliersButton').addEventListener('click', generateMultipliers);
+
+function generateMultipliers() {
+    const blueProb = parseFloat(document.getElementById("blueProbInput").value) / 100;
+    const redProb = parseFloat(document.getElementById("redProbInput").value) / 100;
+    const greenProb = parseFloat(document.getElementById("greenProbInput").value) / 100;
+
+    if (blueProb + redProb + greenProb !== 1) {
+        alert("Probabilities must sum up to 100%");
+        return;
+    }
+
+    const houseEdge = 0.95; // Adjust this value to make the multipliers worse for the player
+
+    document.getElementById("blueMultiplierInput").value = (houseEdge / blueProb).toFixed(2);
+    document.getElementById("redMultiplierInput").value = (houseEdge / redProb).toFixed(2);
+    document.getElementById("greenMultiplierInput").value = (houseEdge / greenProb).toFixed(2);
 }
