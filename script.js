@@ -11,7 +11,13 @@ let lineGraph;
 window.onload = function() {
     loadInputs();
     initializeLineGraph();
-    makeDraggable(document.getElementById('barChart'), document.getElementById('resultsBox'), document.getElementById('lineGraphContainer'));
+    makeDraggable(
+        document.getElementById('barChart'), 
+        document.getElementById('resultsBox'), 
+        document.getElementById('lineGraphContainer'),
+        document.getElementById('userInputs'),
+        document.getElementById('colourInputs')
+    );
 };
 
 function makeDraggable(...elements) {
@@ -197,6 +203,22 @@ function start() {
     increase = parseFloat(document.getElementById("increaseInput").value);
     speed = parseFloat(document.getElementById("speedInput").value);
 
+    let blueProb = parseFloat(document.getElementById("blueProbInput").value) / 100;
+    let redProb = parseFloat(document.getElementById("redProbInput").value) / 100;
+    let greenProb = parseFloat(document.getElementById("greenProbInput").value) / 100;
+
+    let blueMultiplier = parseFloat(document.getElementById("blueMultiplierInput").value);
+    let redMultiplier = parseFloat(document.getElementById("redMultiplierInput").value);
+    let greenMultiplier = parseFloat(document.getElementById("greenMultiplierInput").value);
+
+    if (blueProb + redProb + greenProb !== 1) {
+        alert("Probabilities must sum up to 100%");
+        inputs.forEach(input => input.disabled = false);
+        buttons.forEach(button => button.disabled = false);
+        started = false;
+        return;
+    }
+
     if (bet > budget) {
         bet = budget;
     }
@@ -218,12 +240,20 @@ function start() {
                 return;
             }
             let num = Math.random();
-            if (num < 0.4) num = 0;
-            else if (num < 0.8) num = 1;
-            else num = 2;
+            let multiplier = 1;
+            if (num < blueProb) {
+                num = 0;
+                multiplier = blueMultiplier;
+            } else if (num < blueProb + redProb) {
+                num = 1;
+                multiplier = redMultiplier;
+            } else {
+                num = 2;
+                multiplier = greenMultiplier;
+            }
             chosen[num]++;
             if (num === target) {
-                budget += bet;
+                budget += bet * multiplier;
                 wins += 1;
                 bet = parseFloat(document.getElementById("betInput").value);
             } else {

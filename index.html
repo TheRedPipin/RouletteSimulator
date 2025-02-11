@@ -21,13 +21,27 @@
         <input id="increaseInput" type="number" placeholder="0">
         <div>Runs Per Miliseconds</div>
         <input id="speedInput" type="number" placeholder="0">
+        <button onclick="start()">Start Simulation</button>
+    </div>
+    <div id="colourInputs" draggable="true">
         <div>Pick Colour</div>
         <div id="colourButtons">
             <button id="blueButton">Blue</button>
             <button id="redButton">Red</button>
             <button id="greenButton">Green</button>
         </div>
-        <button onclick="start()">Start Simulation</button>
+        <div>Blue Probability (%)</div>
+        <input id="blueProbInput" type="number" placeholder="40" value="40">
+        <div>Red Probability (%)</div>
+        <input id="redProbInput" type="number" placeholder="40" value="40">
+        <div>Green Probability (%)</div>
+        <input id="greenProbInput" type="number" placeholder="20" value="20">
+        <div>Blue Multiplier</div>
+        <input id="blueMultiplierInput" type="number" placeholder="1" value="1">
+        <div>Red Multiplier</div>
+        <input id="redMultiplierInput" type="number" placeholder="1" value="1">
+        <div>Green Multiplier</div>
+        <input id="greenMultiplierInput" type="number" placeholder="1" value="1">
     </div>
     <div id="resultsBox" draggable="true">
         <div id="winText">Wins: ???</div>
