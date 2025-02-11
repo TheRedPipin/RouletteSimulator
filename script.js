@@ -5,21 +5,29 @@ let runsTotal = 0;
 let startBudget;
 let started = false;
 let chosen = [];
-let timeouts = []; // Array to store timeouts
+let timeouts = [];
 let lineGraph;
 let betSizeGraph;
+let maxBet = 0;
+let currentWinStreak = 0;
+let currentLossStreak = 0;
+let longestWinStreak = 0;
+let longestLossStreak = 0;
+let pieChart;
 
 window.onload = function() {
     loadInputs();
     initializeLineGraph();
     initializeBetSizeGraph();
+    initializePieChart();
     makeDraggable(
         document.getElementById('barChart'), 
         document.getElementById('resultsBox'), 
         document.getElementById('lineGraphContainer'),
         document.getElementById('betSizeGraphContainer'),
         document.getElementById('userInputs'),
-        document.getElementById('colourInputs')
+        document.getElementById('colourInputs'),
+        document.getElementById('pieChartContainer')
     );
 };
 
@@ -30,7 +38,8 @@ document.getElementById('draggableCheckbox').addEventListener('change', (e) => {
         document.getElementById('lineGraphContainer'),
         document.getElementById('betSizeGraphContainer'),
         document.getElementById('userInputs'),
-        document.getElementById('colourInputs')
+        document.getElementById('colourInputs'),
+        document.getElementById('pieChartContainer')
     ];
     if (e.target.checked) {
         makeDraggable(...elements);
@@ -49,7 +58,7 @@ function makeDraggable(...elements) {
         element.addEventListener('dragstart', (e) => {
             offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
             offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
-            e.dataTransfer.setData('text/plain', null); // Required for Firefox
+            e.dataTransfer.setData('text/plain', null);
 
             document.addEventListener('drop', onDrop);
         });
@@ -86,7 +95,7 @@ document.getElementById('greenButton').addEventListener('click', () => {
 function selectColor(color) {
     const buttons = document.querySelectorAll('#colourButtons button');
     buttons.forEach(button => {
-        button.style.backgroundColor = ''; // Reset background color
+        button.style.backgroundColor = '';
     });
 
     const selectedButton = document.getElementById(`${color}Button`);
@@ -168,14 +177,16 @@ function initializeLineGraph() {
                     }
                 },
                 zoom: {
-                    pan: {
+                    zoom: {
+                      wheel: {
                         enabled: true,
-                        mode: 'xy'
-                    },
-                    wheel: {
-                        enabled: true,
+                      },
+                      pinch: {
+                        enabled: true
+                      },
+                      mode: 'xy',
                     }
-                }
+                  }
             }
         }
     });
@@ -239,6 +250,37 @@ function initializeBetSizeGraph() {
     });
 }
 
+function initializePieChart() {
+    const ctx = document.getElementById('pieChart').getContext('2d');
+    pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Blue', 'Red', 'Green'],
+            datasets: [{
+                label: 'Percentage',
+                data: [0, 0, 0],
+                backgroundColor: ['#0816e0', '#E0080B', '#48ff00'],
+                borderColor: ['#0816e0', '#E0080B', '#48ff00'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#ffffff'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updatePieChart(barA, barB, barC) {
+    pieChart.data.datasets[0].data = [barA, barB, barC];
+    pieChart.update();
+}
+
 function updateLineGraph(run, budget) {
     lineGraph.data.labels.push(run);
     lineGraph.data.datasets[0].data.push(budget);
@@ -283,12 +325,20 @@ function start() {
     startBudget = 0;
     budget = 0;
     bet = 0;
+    maxBet = 0;
+    currentWinStreak = 0;
+    currentLossStreak = 0;
+    longestWinStreak = 0;
+    longestLossStreak = 0;
     document.getElementById("winText").innerText = `Wins: ${wins}`;
     document.getElementById("lossText").innerText = `Losses: ${losses}`;
     document.getElementById("runText").innerText = `Runs: ${runsTotal}`;
     document.getElementById("budgetText").innerText = `Budget: $${budget}`;
     document.getElementById("betText").innerText = `Bet: $${bet}`;
     document.getElementById("profitText").innerText = `Profit: $${(budget - startBudget).toFixed(2)}`;
+    document.getElementById("maxBetText").innerText = `Max Bet: $${maxBet}`;
+    document.getElementById("longestWinStreakText").innerText = `Longest Win Streak: ${longestWinStreak}`;
+    document.getElementById("longestLossStreakText").innerText = `Longest Loss Streak: ${longestLossStreak}`;
     if (started) return;
     let inputs = document.querySelectorAll("#userInputs input");
     let buttons = document.querySelectorAll("#userInputs button");
@@ -332,13 +382,13 @@ function start() {
     startBudget = budget;
     chosen = [0, 0, 0];
 
-    resetLineGraph(); // Reset the line graph at the start of a new simulation
-    resetBetSizeGraph(); // Reset the bet size graph at the start of a new simulation
+    resetLineGraph();
+    resetBetSizeGraph();
 
     for (let i = 0; i < runs; i++) {
         if (!started) break;
         let timeout = setTimeout(() => {
-            if (!started) return; // Ensure the simulation stops if started is false
+            if (!started) return;
             if (budget <= 0) {
                 betSizeGraph.data.labels.pop();
                 betSizeGraph.data.datasets[0].data.pop();
@@ -347,7 +397,7 @@ function start() {
                 inputs.forEach(input => input.disabled = false);
                 buttons.forEach(button => button.disabled = false);
                 started = false;
-                clearTimeouts(); // Clear all timeouts
+                clearTimeouts();
                 return;
             }
             let num = Math.random();
@@ -362,24 +412,38 @@ function start() {
             if (num === target) {
                 budget += bet * multiplier;
                 wins += 1;
+                currentWinStreak++;
+                currentLossStreak = 0;
+                if (currentWinStreak > longestWinStreak) {
+                    longestWinStreak = currentWinStreak;
+                }
                 bet = parseFloat(document.getElementById("betInput").value);
             } else {
                 budget -= bet;
+                currentLossStreak++;
+                currentWinStreak = 0;
+                if (currentLossStreak > longestLossStreak) {
+                    longestLossStreak = currentLossStreak;
+                }
                 bet *= increase;
                 if (bet > budget) {
                     bet = budget;
                 }
                 losses += 1;
             }
+            if (bet > maxBet) {
+                maxBet = bet;
+            }
             let percentage = chosen.map(value => (value / (i + 1)) * 100);
             updateBarChart(...percentage);
+            updatePieChart(...percentage);
             updateLineGraph(runsTotal, budget);
             updateBetSizeGraph(runsTotal, bet);
             if (i === runs - 1) {
                 inputs.forEach(input => input.disabled = false);
                 buttons.forEach(button => button.disabled = false);
                 started = false;
-                clearTimeouts(); // Clear all timeouts
+                clearTimeouts();
             }
             runsTotal++;
             document.getElementById("winText").innerText = `Wins: ${wins}`;
@@ -388,8 +452,11 @@ function start() {
             document.getElementById("budgetText").innerText = `Budget: $${parseFloat(budget.toFixed(2))}`;
             document.getElementById("betText").innerText = `Bet: $${parseFloat(bet.toFixed(2))}`;
             document.getElementById("profitText").innerText = `Profit: $${(budget - startBudget).toFixed(2)}`;
+            document.getElementById("maxBetText").innerText = `Max Bet: $${parseFloat(maxBet.toFixed(2))}`;
+            document.getElementById("longestWinStreakText").innerText = `Longest Win Streak: ${longestWinStreak}`;
+            document.getElementById("longestLossStreakText").innerText = `Longest Loss Streak: ${longestLossStreak}`;
         }, i * speed);
-        timeouts.push(timeout); // Store timeout
+        timeouts.push(timeout);
     }
 }
 
@@ -410,7 +477,7 @@ function generateMultipliers() {
         return;
     }
 
-    const houseEdge = 0.95; // Adjust this value to make the multipliers worse for the player
+    const houseEdge = 0.95;
 
     document.getElementById("blueMultiplierInput").value = (houseEdge / blueProb).toFixed(2);
     document.getElementById("redMultiplierInput").value = (houseEdge / redProb).toFixed(2);
