@@ -22,6 +22,10 @@
         <div>Runs Per Miliseconds</div>
         <input id="speedInput" type="number" placeholder="0">
         <button onclick="start()">Start Simulation</button>
+        <label>
+            <input type="checkbox" id="draggableCheckbox" checked="true">
+            Enable Draggable
+        </label>
     </div>
     <div id="colourInputs" draggable="true">
         <div>Pick Colour</div>
@@ -71,6 +75,9 @@
     </div>
     <div id="lineGraphContainer" draggable="true">
         <canvas id="lineGraph"></canvas>
+    </div>
+    <div id="betSizeGraphContainer" draggable="true">
+        <canvas id="betSizeGraph"></canvas>
     </div>
 </body>
 </html>

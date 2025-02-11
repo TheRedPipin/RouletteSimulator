@@ -147,6 +147,23 @@ body {
     height: 500px;
 }
 
+#betSizeGraphContainer {
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    transform: translateX(-50%);
+    background-color: #54545f;
+    border: 3px solid #3c3c44;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#betSizeGraph {
+    width: 800px;
+    height: 500px;
+}
+
 #colourInputs {
     position: absolute;
     top: 30%;
@@ -167,4 +184,17 @@ body {
     padding: 5px;
     border-radius: 3px;
     border: 1px solid #ccc;
+}
+
+#generateMultipliersButton {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#draggableCheckbox {
+    margin-top: 10px;
 }

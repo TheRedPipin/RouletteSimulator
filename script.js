@@ -7,21 +7,43 @@ let started = false;
 let chosen = [];
 let timeouts = []; // Array to store timeouts
 let lineGraph;
+let betSizeGraph;
 
 window.onload = function() {
     loadInputs();
     initializeLineGraph();
+    initializeBetSizeGraph();
     makeDraggable(
         document.getElementById('barChart'), 
         document.getElementById('resultsBox'), 
         document.getElementById('lineGraphContainer'),
+        document.getElementById('betSizeGraphContainer'),
         document.getElementById('userInputs'),
         document.getElementById('colourInputs')
     );
 };
 
+document.getElementById('draggableCheckbox').addEventListener('change', (e) => {
+    const elements = [
+        document.getElementById('barChart'), 
+        document.getElementById('resultsBox'), 
+        document.getElementById('lineGraphContainer'),
+        document.getElementById('betSizeGraphContainer'),
+        document.getElementById('userInputs'),
+        document.getElementById('colourInputs')
+    ];
+    if (e.target.checked) {
+        makeDraggable(...elements);
+    } else {
+        elements.forEach(element => {
+            element.removeAttribute('draggable');
+        });
+    }
+});
+
 function makeDraggable(...elements) {
     elements.forEach(element => {
+        element.setAttribute('draggable', true);
         let offsetX, offsetY;
 
         element.addEventListener('dragstart', (e) => {
@@ -152,6 +174,63 @@ function initializeLineGraph() {
                     },
                     wheel: {
                         enabled: true,
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initializeBetSizeGraph() {
+    const ctx = document.getElementById('betSizeGraph').getContext('2d');
+    betSizeGraph = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Bet Size Over Time',
+                data: [],
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Runs',
+                        color: '#ffffff'
+                    },
+                    ticks: {
+                        color: '#ffffff'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Bet Size',
+                        color: '#ffffff'
+                    },
+                    ticks: {
+                        color: '#ffffff'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#ffffff'
+                    }
+                },
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'xy'
+                    },
+                    wheel: {
+                        enabled: true,
                         mode: 'xy'
                     }
                 }
@@ -159,16 +238,29 @@ function initializeLineGraph() {
         }
     });
 }
+
 function updateLineGraph(run, budget) {
     lineGraph.data.labels.push(run);
     lineGraph.data.datasets[0].data.push(budget);
     lineGraph.update();
 }
 
+function updateBetSizeGraph(run, betSize) {
+    betSizeGraph.data.labels.push(run);
+    betSizeGraph.data.datasets[0].data.push(betSize);
+    betSizeGraph.update();
+}
+
 function resetLineGraph() {
     lineGraph.data.labels = [];
     lineGraph.data.datasets[0].data = [];
     lineGraph.update();
+}
+
+function resetBetSizeGraph() {
+    betSizeGraph.data.labels = [];
+    betSizeGraph.data.datasets[0].data = [];
+    betSizeGraph.update();
 }
 
 function start() {
@@ -201,7 +293,7 @@ function start() {
     let inputs = document.querySelectorAll("#userInputs input");
     let buttons = document.querySelectorAll("#userInputs button");
     for (let input of inputs) {
-        if (isNaN(input.value) || input.value === "") {
+        if (input.type !== 'checkbox' && (isNaN(input.value) || input.value === "")) {
             alert("Please enter valid numbers in all input fields.");
             return;
         }
@@ -241,12 +333,16 @@ function start() {
     chosen = [0, 0, 0];
 
     resetLineGraph(); // Reset the line graph at the start of a new simulation
+    resetBetSizeGraph(); // Reset the bet size graph at the start of a new simulation
 
     for (let i = 0; i < runs; i++) {
         if (!started) break;
         let timeout = setTimeout(() => {
             if (!started) return; // Ensure the simulation stops if started is false
             if (budget <= 0) {
+                betSizeGraph.data.labels.pop();
+                betSizeGraph.data.datasets[0].data.pop();
+                betSizeGraph.update();
                 alert("Simulation ended: Budget reached 0.");
                 inputs.forEach(input => input.disabled = false);
                 buttons.forEach(button => button.disabled = false);
@@ -278,6 +374,7 @@ function start() {
             let percentage = chosen.map(value => (value / (i + 1)) * 100);
             updateBarChart(...percentage);
             updateLineGraph(runsTotal, budget);
+            updateBetSizeGraph(runsTotal, bet);
             if (i === runs - 1) {
                 inputs.forEach(input => input.disabled = false);
                 buttons.forEach(button => button.disabled = false);
