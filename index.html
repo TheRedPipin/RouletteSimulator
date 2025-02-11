@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Simulator</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.0.0/dist/chartjs-plugin-zoom.min.js"></script>
+</head>
+<body>
+    <div id="userInputs">
+        <div>Number Of Runs</div>
+        <input id="runsInput" type="number" placeholder="0">
+        <div>Budget</div>
+        <input id="budgetInput" type="number" placeholder="0">
+        <div>Bet Amount</div>
+        <input id="betInput" type="number" placeholder="0">
+        <div>Mutliplier Increase</div>
+        <input id="increaseInput" type="number" placeholder="0">
+        <div>Runs Per Miliseconds</div>
+        <input id="speedInput" type="number" placeholder="0">
+        <div>Pick Colour</div>
+        <div id="colourButtons">
+            <button id="blueButton">Blue</button>
+            <button id="redButton">Red</button>
+            <button id="greenButton">Green</button>
+        </div>
+        <button onclick="start()">Start Simulation</button>
+    </div>
+    <div id="resultsBox" draggable="true">
+        <div id="winText">Wins: ???</div>
+        <div id="lossText">Losses: ???</div>
+        <div id="budgetText">Budget: ???</div>
+        <div id="betText">Bet: ???</div>
+        <div id="runText">Run: ???</div>
+        <div id="profitText">Profit: ???</div>
+    </div>
+    <div id="barChart" draggable="true">
+        <div class="bar" id="barA" style="background-color: #0816e0;">
+            <div class="barText">
+                ???%
+            </div>
+        </div>
+        <div class="bar" id="barB" style="background-color: #E0080B;">
+            <div class="barText">
+                ???%
+            </div>
+        </div>
+        <div class="bar" id="barC" style="background-color: #48ff00;">
+            <div class="barText">
+                ???%
+            </div>
+        </div>
+    </div>
+    <div id="lineGraphContainer" draggable="true">
+        <canvas id="lineGraph"></canvas>
+    </div>
+</body>
+</html>

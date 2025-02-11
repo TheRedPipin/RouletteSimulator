@@ -1,0 +1,136 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #32323a;
+    margin: 0;
+    padding: 0;
+}
+
+#barChart {
+    position: absolute;
+    top: 20px;
+    left: 15%;
+    height: 250px;
+    width: 250px;
+    background-color: #54545f;
+    border: 3px solid #3c3c44;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: baseline;
+    align-items: end;
+    cursor: move; /* Change cursor to indicate draggable */
+}
+.bar {
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+    transition: height 0.1s;
+    border: 2px solid #32323a;
+    border-radius: 3px;
+    background-color: #6c757d;
+    padding: 5px;
+    margin: 2px;
+    position: relative;
+}
+.barText {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+#userInputs {
+    text-align: center;
+    display: grid;
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    color: #ffffff;
+    font-weight: bold;
+    margin: 20px 20px;
+}
+
+#userInputs div {
+    background-color: rgba(255, 255, 255, 0.7);
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    padding: 2px 0px;
+    border: 2px brown solid;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+#userInputs input {
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+
+#userInputs button {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#colourButtons button {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#userInputs button:hover {
+    background-color: #45a049;
+}
+
+#colourButtons button:hover {
+    background-color: #333333;
+}
+
+#resultsBox {
+    position: absolute;
+    text-align: center;
+    display: grid;
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    color: #ffffff;
+    font-weight: bold;
+    margin: 20px 20px;
+    cursor: move; /* Change cursor to indicate draggable */
+}
+
+#resultsBox div {
+    background-color: rgba(255, 255, 255, 0.7);
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    padding: 2px 0px;
+    border: 2px brown solid;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+#lineGraphContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #54545f;
+    border: 3px solid #3c3c44;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#lineGraph {
+    width: 400px;
+    height: 250px;
+}
