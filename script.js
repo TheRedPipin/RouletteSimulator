@@ -14,6 +14,7 @@ let currentLossStreak = 0;
 let longestWinStreak = 0;
 let longestLossStreak = 0;
 let pieChart;
+let runningTotal = 0;
 
 window.onload = function() {
     loadInputs();
@@ -384,7 +385,7 @@ function start() {
 
     resetLineGraph();
     resetBetSizeGraph();
-
+    runningTotal -= budget;
     for (let i = 0; i < runs; i++) {
         if (!started) break;
         let timeout = setTimeout(() => {
@@ -440,6 +441,7 @@ function start() {
             updateLineGraph(runsTotal, budget);
             updateBetSizeGraph(runsTotal, bet);
             if (i === runs - 1) {
+                runningTotal += budget;
                 inputs.forEach(input => input.disabled = false);
                 buttons.forEach(button => button.disabled = false);
                 started = false;
@@ -452,6 +454,7 @@ function start() {
             document.getElementById("budgetText").innerText = `Budget: $${parseFloat(budget.toFixed(2))}`;
             document.getElementById("betText").innerText = `Bet: $${parseFloat(bet.toFixed(2))}`;
             document.getElementById("profitText").innerText = `Profit: $${(budget - startBudget).toFixed(2)}`;
+            document.getElementById("totalProfitText").innerText = `Running Total: $${parseFloat(runningTotal.toFixed(2))}`;
             document.getElementById("maxBetText").innerText = `Max Bet: $${parseFloat(maxBet.toFixed(2))}`;
             document.getElementById("longestWinStreakText").innerText = `Longest Win Streak: ${longestWinStreak}`;
             document.getElementById("longestLossStreakText").innerText = `Longest Loss Streak: ${longestLossStreak}`;
